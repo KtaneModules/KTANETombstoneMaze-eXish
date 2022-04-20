@@ -15,6 +15,6 @@ MonoBehaviour:
   title: Tombstone Maze
   author: BakersDozenBagels
   description: Navigate two mazes at once to block your opponent and find the goal.
-  version: 1.0
+  version: 1.1
   outputFolder: build
-  previewImage: {fileID: 2800000, guid: bd5c1f4881f57d54481b44e4c8a7779a, type: 3}
+  previewImage: {fileID: 2800000, guid: ab9f56e3221820047a6f4c457f8e769c, type: 3}
