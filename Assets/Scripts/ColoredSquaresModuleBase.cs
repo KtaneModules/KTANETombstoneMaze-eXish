@@ -58,9 +58,16 @@ public abstract class ColoredSquaresModuleBase : MonoBehaviour
         for (int i = 0; i < 16; i++)
             _scaffold.Buttons[i].OnInteract = MakeButtonHandler(i);
         SetAllButtonsBlack();
+    }
+    
+    private void Start()
+    {
         for (int i = 0; i < 16; i++)
             _scaffold.Lights[i].range = .1f * _module.transform.lossyScale.x;
+        DoStart();
     }
+
+    protected abstract void DoStart();
 
     private KMSelectable.OnInteractHandler MakeButtonHandler(int index)
     {
@@ -142,6 +149,7 @@ public abstract class ColoredSquaresModuleBase : MonoBehaviour
 
     public void SetButtonBlack(int index)
     {
+        _colors[index] = (int)SquareColor.Black;
         _buttonRenderers[index].sharedMaterial = _scaffold.Materials[(int) SquareColor.Black];
         _scaffold.Lights[index].gameObject.SetActive(false);
     }
@@ -158,6 +166,7 @@ public abstract class ColoredSquaresModuleBase : MonoBehaviour
             SetButtonBlack(ix);
         else
         {
+            _colors[ix] = color;
             _buttonRenderers[ix].sharedMaterial = _colorblind ? _scaffold.MaterialsCB[(int) color] ?? _scaffold.Materials[(int) color] : _scaffold.Materials[(int) color];
             _scaffold.Lights[ix].color = _lightColors[(int) color];
             _scaffold.Lights[ix].gameObject.SetActive(true);
@@ -213,7 +222,7 @@ public abstract class ColoredSquaresModuleBase : MonoBehaviour
     {
         if (command.Trim().Equals("colorblind", StringComparison.InvariantCultureIgnoreCase))
         {
-            _colorblind = true;
+            _colorblind = !_colorblind;
             StartSquareColorsCoroutine(_colors);
             yield return null;
             yield break;
@@ -228,8 +237,6 @@ public abstract class ColoredSquaresModuleBase : MonoBehaviour
         }
 
         yield return null;
-        yield return "solve";
-        yield return "strike";
         yield return buttons;
     }
 }

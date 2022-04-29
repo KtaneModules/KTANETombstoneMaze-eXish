@@ -1,5 +1,4 @@
 ﻿using ColoredSquares;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +16,7 @@ public sealed class TombstoneMazeModule : ColoredSquaresModuleBase
     private int _opponentRememberedPosition;
     private int _opponentLastMoveDir;
 
-    private void Start()
+    protected override void DoStart()
     {
         SetInitialState();
     }
@@ -49,14 +48,14 @@ public sealed class TombstoneMazeModule : ColoredSquaresModuleBase
         );
         Log("Hidden Maze:");
         Log(
-            "┼─┼─┼─┼─┼\n" +
+            "\n┼─┼─┼─┼─┼\n" +
             Enumerable.Range(0, 4).Select(row =>
                 "│" + Enumerable.Range(0, 4).Select(col => box.Substring(0, 2).Replace('│', _canGoRightHidden[row * 4 + col] ? ' ' : '│')).Join("") +
                 "\n┼" + Enumerable.Range(0, 4).Select(col => box.Substring(3, 2).Replace('─', _canGoDownHidden[row * 4 + col] ? ' ' : '─')).Join("")
             ).Join("\n")
         );
 
-        StartSquareColorsCoroutine(Enumerable.Range(0, 16).Select(i => MazeColor(i)).ToArray());
+        StartSquareColorsCoroutine(Enumerable.Range(0, 16).Select(i => MazeColor(i)).ToArray(), delay: true);
     }
 
     private SquareColor MazeColor(int i)
@@ -72,10 +71,10 @@ public sealed class TombstoneMazeModule : ColoredSquaresModuleBase
     /// </summary>
     private int MazeDirections(int i, bool hidden = false)
     {
-        return (i < 12 && (hidden ? _canGoDown : _canGoDownHidden)[i] ? 1 : 0) |
-            (i >= 4 && (hidden ? _canGoDown : _canGoDownHidden)[i - 4] ? 2 : 0) |
-            (i % 4 != 3 && (hidden ? _canGoRight : _canGoRightHidden)[i] ? 4 : 0) |
-            (i % 4 != 0 && (hidden ? _canGoRight : _canGoRightHidden)[i - 1] ? 8 : 0);
+        return (i < 12 && (hidden ? _canGoDownHidden : _canGoDown)[i] ? 1 : 0) |
+            (i >= 4 && (hidden ? _canGoDownHidden : _canGoDown)[i - 4] ? 2 : 0) |
+            (i % 4 != 3 && (hidden ? _canGoRightHidden : _canGoRight)[i] ? 4 : 0) |
+            (i % 4 != 0 && (hidden ? _canGoRightHidden : _canGoRight)[i - 1] ? 8 : 0);
     }
 
     private bool[][] GenerateMaze()
@@ -288,23 +287,21 @@ public sealed class TombstoneMazeModule : ColoredSquaresModuleBase
             StartSquareColorsCoroutine(squares);
             EnemyDig(squares);
 
-            Log("You could go to position {0}.", dugix);
+            Log("You could not go to position {0}.", dugix);
         }
         else
         {
-            Log("You could not go to position {0}.", dugix);
-
             SquareColor[] squares = Enumerable.Repeat(SquareColor.Green, 16).ToArray();
             squares[dugix] = SquareColor.White;
             StartSquareColorsCoroutine(squares);
             if(dugix == 3)
             {
-                Log("You dug position 3, module solved.");
-                if(ActiveCoroutine != null)
-                    StopCoroutine(ActiveCoroutine);
+                StopAllCoroutines();
+                Log("You dug position 3.");
                 ModulePassed();
                 return;
             }
+            Log("You could go to position {0}.", dugix);
             EnemyDig(squares);
         }
     }
@@ -331,7 +328,7 @@ public sealed class TombstoneMazeModule : ColoredSquaresModuleBase
 
         int dugix = dir == 0 ? _opponentPosition - 4 : dir == 1 ? _opponentPosition + 1 : dir == 2 ? _opponentPosition + 4 : _opponentPosition - 1;
 
-        Log("The pawn dug in position {1}.", dugix);
+        Log("The pawn dug in position {0}.", dugix);
         if(wall)
             Log("They did not gain any new information, as they hit something.");
         else
