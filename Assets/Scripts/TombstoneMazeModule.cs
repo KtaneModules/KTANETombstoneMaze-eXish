@@ -339,6 +339,7 @@ public sealed class TombstoneMazeModule : ColoredSquaresModuleBase
             _opponentRememberedPosition = _opponentPosition;
             if(dir == 2 && _opponentPosition == 8 || dir == 3 && _opponentPosition == 13)
             {
+                StopAllCoroutines();
                 Strike("They dug in position 12. You lose. Strike!");
                 return;
             }
