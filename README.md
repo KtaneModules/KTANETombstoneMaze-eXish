@@ -1,3 +1,9 @@
-# This mod contains multiple modules.
+Module by BakersDozenBagels
+Maintained by eXish
 
-Refer to the Appendix in the [Colored Squares manual](https://ktane.timwi.de/HTML/Colored%20Squares.html) to see a list of them.
+==Steam Workshop Link==
+https://steamcommunity.com/sharedfiles/filedetails/?id=2801226347
+
+==Manual Links==
+HTML: https://ktane.timwi.de/HTML/Tombstone%20Maze.html
+PDF: https://ktane.timwi.de/PDF/Tombstone%20Maze.pdf
